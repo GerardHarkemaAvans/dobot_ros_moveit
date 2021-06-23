@@ -6,6 +6,6 @@ moveit_setup_assistant_config:
   SRDF:
     relative_path: config/magician.srdf
   CONFIG:
-    author_name: CongLiu
-    author_email: liucong.cdhaw@gmail.com
-    generated_timestamp: 1623868821
+    author_name: Gerard Harkema
+    author_email: GA.Harkema@avans.nl
+    generated_timestamp: 1623855514

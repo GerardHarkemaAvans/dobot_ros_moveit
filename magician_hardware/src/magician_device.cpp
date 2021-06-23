@@ -40,22 +40,24 @@ Created on Thurs June 19 16:42 2019
 
 #include <magician_hardware/magician_device.h>
 
-namespace magician_hardware {
+//namespace magician_hardware {
 
-MagicianDevice::MagicianDevice(unsigned long motor_num, std::vector<int> pulse_signs): local_nh_("~"), motor_num_(motor_num)
+MagicianDevice::MagicianDevice(unsigned long motor_num): local_nh_("~"), motor_num_(motor_num)
 {
     joint_bases_.resize(motor_num_);
     joint_offsets_.resize(motor_num_);
-    pulse_angles_.resize(motor_num_);
+    //pulse_angles_.resize(motor_num_);
+    old_joint_cmds.resize(motor_num_);
 
     for(size_t i=0; i<joint_bases_.size(); i++)
     {
         joint_bases_[i]=0;
         joint_offsets_[i]=0;
-        pulse_angles_[i]=0;
+        //pulse_angles_[i]=0;
+        old_joint_cmds[i] = 0;
     }
 
-    pulse_signs_=pulse_signs;
+    //pulse_signs_=pulse_signs;
 }
 
 MagicianDevice::~MagicianDevice()
@@ -65,17 +67,21 @@ MagicianDevice::~MagicianDevice()
 
 bool MagicianDevice::InitPose()
 {
-    if(motor_num_>4 || pulse_signs_.size()!=motor_num_)
+    uint64_t executedCmdIndex = 0;
+    uint64_t queuedCmdIndex;
+    int result;
+    
+    if(motor_num_>4)// || pulse_signs_.size()!=motor_num_)
     {
         return false;
     }
 
-    SetHHTTrigMode(TriggeredOnKeyReleased);
-    SetHHTTrigOutputEnabled(true);
+    //SetHHTTrigMode(TriggeredOnKeyReleased);
+    //SetHHTTrigOutputEnabled(true);
 
     Pose pose;
     int get_pose_times=0;
-    int result=DobotCommunicate_InvalidParams;
+    result=DobotCommunicate_InvalidParams;
 
     while (result!=DobotCommunicate_NoError) {
         result=GetPose(&pose);
@@ -94,9 +100,44 @@ bool MagicianDevice::InitPose()
         joint_offsets_[i]=0;
     }
 
+#if 1
+
+    
+    PTPJointParams ptpJointParams;
+
+    #define DEFAULT_velocity 500
+    #define DEFAULT_acceleration 500
+    
+    ptpJointParams.velocity[0] = DEFAULT_velocity; // range 0 .. 500 mm/s 
+    ptpJointParams.velocity[1] = DEFAULT_velocity; // range 0 .. 500 mm/s 
+    ptpJointParams.velocity[2] = DEFAULT_velocity; // range 0 .. 500 mm/s 
+    ptpJointParams.velocity[3] = DEFAULT_velocity; // range 0 .. 500 mm/s 
+    ptpJointParams.acceleration[0]= DEFAULT_acceleration; // range 0.. 500 mm/s2
+    ptpJointParams.acceleration[1]= DEFAULT_acceleration; // range 0.. 500 mm/s2
+    ptpJointParams.acceleration[2]= DEFAULT_acceleration; // range 0.. 500 mm/s2
+    ptpJointParams.acceleration[3]= DEFAULT_acceleration; // range 0.. 500 mm/s2
+
+    std::cout<<"SetPTPJointParams"<<std::endl;
+    result = SetPTPJointParams(&ptpJointParams, true, &queuedCmdIndex);
+    if(result){
+        std::cout<<"Unable to set joint parameters, result : " << result <<std::endl;
+    }
+  
+    while(executedCmdIndex < queuedCmdIndex){
+        sleep(1);
+        GetQueuedCmdCurrentIndex(&executedCmdIndex); 
+        }
+   
+#if 1
+    std::cout<<"SetPTPCmd"<<std::endl;
+#endif
+#endif
+
+
     return true;
 }
 
+#if 0
 bool MagicianDevice::ResetPose(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &resp, std::vector<double> &joint_values)
 {
     if(!req.data)
@@ -147,6 +188,7 @@ bool MagicianDevice::ResetPose(std_srvs::SetBool::Request &req, std_srvs::SetBoo
     resp.success=true;
     return true;
 }
+#endif
 
 bool MagicianDevice::ReadPose(std::vector<double> &joint_values)
 {
@@ -163,7 +205,7 @@ bool MagicianDevice::ReadPose(std::vector<double> &joint_values)
       std::cout<<"J3: "<<pose.jointAngle[2]<<std::endl;
       std::cout<<"J3: "<<pose.jointAngle[3]<<std::endl;
 #endif
-
+#if 1
     bool pose_changed=true;  // chagend by gerard
     if(result==DobotCommunicate_NoError)
     {
@@ -187,7 +229,7 @@ bool MagicianDevice::ReadPose(std::vector<double> &joint_values)
             joint_offsets_[i]=0;
         }
     }
-
+#endif
 
 //    bool isTriggered;
 //    GetHHTTrigOutput(&isTriggered);
@@ -201,83 +243,72 @@ bool MagicianDevice::ReadPose(std::vector<double> &joint_values)
     return true;
 }
 
+
 bool MagicianDevice::WritePose(const std::vector<double> &joint_cmds)
 {
-    assert(joint_cmds.size()==motor_num_);
+  assert(joint_cmds.size()==motor_num_);
 
-    std::vector<double> pulse_angles=joint_cmds;
-    std::vector<double> pulses;
-    pulses.resize(6);
+  //std::vector<double> pulse_angles=joint_cmds;
+  //std::vector<double> pulses;
+  //pulses.resize(6);
 
-#if 1
-    std::cout<<"WritePose"<<std::endl;
-#endif
-      
-    for (size_t i=0; i<pulse_angles.size(); i++)
+  uint64_t executedCmdIndex = 0;
+  //uint64_t queuedCmdIndex;
+  int result;
+
+
+
+  if(Busy){
+
+    //std::cout<<"b"<< std::flush;
+    GetQueuedCmdCurrentIndex(&executedCmdIndex);
+    if(executedCmdIndex >= queuedCmdIndex) Busy = false;
+
+  }
+  else{
+    //std::cout<<"nb"<< std::flush;
+    for (size_t i=0; i<motor_num_; i++)
     {
-#if 1
-        std::cout<<"joint_cmds "<< i << ": " << pulse_angles[i]<<std::endl;
-#endif
-        pulse_angles[i]-=joint_offsets_[i]+joint_bases_[i];
-        pulses[i]=round(pulse_angles[i]*PULSE_PER_RAD*pulse_signs_[i]);
+    #if 0
+      std::cout<<"joint_cmds "<< i << ": " << joint_cmds[i]<<std::endl;
+    #endif
+    //        pulse_angles[i]-=joint_offsets_[i]+joint_bases_[i];
+    //        pulses[i]=round(pulse_angles[i]*PULSE_PER_RAD*pulse_signs_[i]);
     }
 
-    for(size_t i=pulse_angles.size(); i<pulses.size(); i++)
+    for(size_t i=0; i<motor_num_; i++)
     {
-        pulses[i]=0;
-    }
-
-    PluseCmd cmd;
-    cmd.j1=pulses[0];
-    cmd.j2=pulses[1];
-    cmd.j3=pulses[2];
-    cmd.j4=pulses[3];
-    cmd.e1=pulses[4];
-    cmd.e2=pulses[5];
-
-    uint64_t index;
-
-    int send_pulse_times=0;
-    int result=DobotCommunicate_InvalidParams;
-#if 0
-    if(0){ // dit is nog niet de juiste methode
+      if (old_joint_cmds[i]!=joint_cmds[i]){
+        std::cout<<"SetPTPCmd"<<std::endl;
         PTPCmd cmd;
-    uint64_t queuedCmdIndex;
-
-    cmd.ptpMode = req.ptpMode;
-    cmd.x = req.x;
-    cmd.y = req.y;
-    cmd.z = req.z;
-    cmd.r = req.r;
-    int result = SetPTPCmd(&cmd, true, &queuedCmdIndex);
-    if (result == DobotCommunicate_NoError) {
-        //queuedCmdIndex = queuedCmdIndex;
-    }
-    }
-#endif
-    while(result!= DobotCommunicate_NoError && send_pulse_times<1) {
-        result=SendPluse(&cmd, false, &index);
-        send_pulse_times++;
-    }
-
-    if(result==DobotConnect_NoError)
-    {
-        for (size_t i=0; i<joint_offsets_.size(); i++)
+        cmd.ptpMode = PTPMOVLANGLEMode;
+        cmd.x = joint_cmds[0];
+        cmd.y = joint_cmds[1];
+        cmd.z = joint_cmds[2];
+        cmd.r = 0;
+        result=SetPTPCmd(&cmd, true, &queuedCmdIndex);
+        if (result) {
+           std::cout<<"Unable set angles, result : " << result <<std::endl;
+           return false;
+        } 
+        Busy = true; 
+        
+        for(size_t i=0; i<motor_num_; i++)
         {
-            pulse_angles_[i]=pulses[i]*RAD_PER_PULSE*pulse_signs_[i];
-            joint_offsets_[i]+=pulse_angles_[i];
+          old_joint_cmds[i]=joint_cmds[i];
         }
         return true;
+
+      }
     }
-    else
-    {
-        return false;
-    }
+  }   
+    
 }
 
+#if 0
 void MagicianDevice::GetPulseAngle(std::vector<double> &pulse_angles)
 {
     pulse_angles=pulse_angles_;
 }
-
-}
+#endif
+//}

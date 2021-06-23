@@ -56,11 +56,14 @@ Created on Thurs June 19 18:18 2019
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/robot_hw.h>
 
+#include <joint_limits_interface/joint_limits.h>
+#include <joint_limits_interface/joint_limits_interface.h>
+
 #include <controller_manager/controller_manager.h>
 
 #include <magician_hardware/magician_device.h>
 
-namespace magician_hardware {
+//namespace magician_hardware {
 
 typedef struct{
     std::string name;
@@ -71,30 +74,36 @@ typedef struct{
     double old_position;
 
     double position_cmd;
+ //   double old_position_cmd;
+    
 }SimpleMotor;
 
 class MagicianHWInterface : public hardware_interface::RobotHW
 {
 public:
-    MagicianHWInterface();
+//    MagicianHWInterface();
+    MagicianHWInterface(ros::NodeHandle& nh);
     ~MagicianHWInterface();
 
-    bool init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh);
+    bool init();
+    //bool init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh);
     void read(const ros::Time& time, const ros::Duration& period);
     void write(const ros::Time& time, const ros::Duration& period);
 
-    bool reinitPose(const std::vector<double> &joint_values);
+    //bool reinitPose(const std::vector<double> &joint_values);
     bool isMoving();
-    bool ResetPose(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &resp);
+    //bool ResetPose(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &resp);
 
 private:
     boost::shared_ptr<MagicianDevice> magician_device_;
     std::vector<SimpleMotor> simple_motors_;
 
-    hardware_interface::JointStateInterface jnt_state_interface_;
-    hardware_interface::PositionJointInterface jnt_position_cmd_interface_;
+    hardware_interface::JointStateInterface joint_state_interface_;
+    hardware_interface::PositionJointInterface position_joint_interface_;
+    //joint_limits_interface::JointLimits limits_;
 
-    ros::NodeHandle root_nh_, local_nh_, robot_hw_nh_;
+    //ros::NodeHandle root_nh_, local_nh_, robot_hw_nh_;
+    ros::NodeHandle nh_;
 
     ros::Time read_update_time_;
     ros::Duration read_update_dur_;
@@ -102,6 +111,6 @@ private:
     double move_threshold_;
 };
 
-}
+//}
 
 #endif

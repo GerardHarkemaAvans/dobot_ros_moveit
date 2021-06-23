@@ -1,5 +1,5 @@
 magician_arm_controller:
-  type: position_controllers/JointPositionController
+  type: position_controllers/JointGroupPositionController
   joints:
      - magician_joint1
      - magician_joint2

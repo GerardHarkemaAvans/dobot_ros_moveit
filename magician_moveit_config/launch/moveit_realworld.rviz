@@ -11,7 +11,7 @@ Panels:
         - /Effort1/Joints1
         - /TF1/Frames1
       Splitter Ratio: 0.7425600290298462
-    Tree Height: 761
+    Tree Height: 335
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -172,7 +172,7 @@ Visualization Manager:
         Goal State Color: 250; 128; 0
         Interactive Marker Size: 0.15000000596046448
         Joint Violation Color: 255; 0; 255
-        Planning Group: magician_arm
+        Planning Group: manipulator
         Query Goal State: false
         Query Start State: false
         Show Workspace: false

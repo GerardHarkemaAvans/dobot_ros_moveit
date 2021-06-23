@@ -11,9 +11,9 @@
   
   <xacro:property name="joint1_lower" value="-2.1816"/>
   <xacro:property name="joint1_upper" value="2.1816"/>
-  <xacro:property name="joint2_lower" value="-0.35"/>
+  <xacro:property name="joint2_lower" value="0.35"/>
   <xacro:property name="joint2_upper" value="1.57"/>
-  <xacro:property name="joint3_lower" value="-0.62"/>
+  <xacro:property name="joint3_lower" value="0.62"/>
   <xacro:property name="joint3_upper" value="1.57"/>
   
   <link name="world"/>

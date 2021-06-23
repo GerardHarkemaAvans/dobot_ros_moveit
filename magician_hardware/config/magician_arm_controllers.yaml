@@ -5,9 +5,13 @@ MagicianHWInterface:
        - magician_joint1
        - magician_joint2
        - magician_joint3
+    constraints:
+        goal_time: 0.6
+        stopped_velocity_tolerance: 0.1
+    stop_trajectory_duration: 0.05
     state_publish_rate:  25
-
-
+    action_monitor_rate: 10
+  # No PID values defined since this controller simply passes the input position command to the actuators.
   joint_state_controller:
       type: joint_state_controller/JointStateController
       publish_rate: 50  
