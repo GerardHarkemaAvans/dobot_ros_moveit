@@ -42,18 +42,12 @@ Created on Thurs June 19 10:08 2019
 
 //namespace magician_hardware {
 
-//MagicianHWInterface::MagicianHWInterface(): local_nh_("~")
 MagicianHWInterface::MagicianHWInterface(ros::NodeHandle& nh): nh_(nh)
 {
 
     std::string default_magician_joints_array[3]={"magician_joint1", "magician_joint2", "magician_joint3"};
     std::vector<std::string> default_magician_joints(default_magician_joints_array, default_magician_joints_array+3);
     std::vector<std::string> magician_joints=nh_.param<std::vector<std::string> >("magician_joints", default_magician_joints);
-    //std::vector<std::string> magician_joints=local_nh_.param<std::vector<std::string> >("magician_joints", default_magician_joints);
-    
-    //int default_pulse_signs_array[3]={-1, 1, -1};
-    //std::vector<int> default_pulse_signs(default_pulse_signs_array, default_pulse_signs_array+3);
-    //std::vector<int> pulse_signs=local_nh_.param<std::vector<int> >("pulse_signs", default_pulse_signs);
 
     magician_device_.reset(new MagicianDevice(magician_joints.size()));
 
@@ -81,12 +75,6 @@ MagicianHWInterface::MagicianHWInterface(ros::NodeHandle& nh): nh_(nh)
     }
     registerInterface(&position_joint_interface_);
     
-    //for(size_t i=0; i<simple_motors_.size(); i++){
-      //joint_limits_interface::getJointLimits(simple_motors_[i].name, local_nh_, limits_);
-      //joint_limits_interface_.registerHandle(jointLimitHandle);
-    //}
-    //registerInterface(&joint_limits_interface_);
-
     move_threshold_=M_PI/180;
     move_threshold_=0.1;
 }
@@ -96,11 +84,8 @@ MagicianHWInterface::~MagicianHWInterface()
 
 }
 
-//bool MagicianHWInterface::init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh)
 bool MagicianHWInterface::init()
 {
-    //root_nh_=root_nh;
-    //robot_hw_nh_=robot_hw_nh;
 
     if(!magician_device_->InitPose())
     {
@@ -141,14 +126,10 @@ void MagicianHWInterface::read(const ros::Time &time, const ros::Duration &perio
     //std::cout<<"Jx2: "<<jnt_values[1]<<std::endl;
     //std::cout<<"Jx3: "<<jnt_values[2]<<std::endl;
 
-    //std::vector<double> pls_angles;
-    //magician_device_->GetPulseAngle(pls_angles);
-    //std::cout<<"P1: "<<pls_angles[0]<<std::endl;
 
     for(size_t i=0; i<simple_motors_.size(); i++)
     {
         simple_motors_[i].position=jnt_values[i];
-        //simple_motors_[i].velocity=pls_angles[i]/read_update_dur_.toSec();
         simple_motors_[i].velocity=(simple_motors_[i].position-simple_motors_[i].old_position)/read_update_dur_.toSec();
         simple_motors_[i].old_position = simple_motors_[i].position;
 
@@ -170,25 +151,7 @@ void MagicianHWInterface::write(const ros::Time &time, const ros::Duration &peri
 
     magician_device_->WritePose(jnt_cmds);
 }
-#if 0
-bool MagicianHWInterface::reinitPose(const std::vector<double> &joint_values)
-{
-    if(joint_values.size()!=simple_motors_.size())
-    {
-        return false;
-    }
 
-    for(size_t i=0; i<simple_motors_.size(); i++)
-    {
-        simple_motors_[i].position=joint_values[i];
-        simple_motors_[i].velocity=0;
-        simple_motors_[i].effort=0;
-        simple_motors_[i].position_cmd=joint_values[i];
-    }
-
-    return true;
-}
-#endif
 bool MagicianHWInterface::isMoving()
 {
     for(size_t i=0; i<simple_motors_.size(); i++)

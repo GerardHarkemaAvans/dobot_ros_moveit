@@ -3,6 +3,7 @@
 import rospy
 from std_msgs.msg import String
 from std_msgs.msg import Float64MultiArray
+from std_msgs.msg import MultiArrayDimension
 
 
 def talker():
@@ -15,8 +16,11 @@ def talker():
 
 
     #while not rospy.is_shutdown():
-    robot_joint_position.data = [0.5, 1.0, 1.5, 0]
-    robot_joint_position.layout.dim.size=3
+    robot_joint_position.data = [0.5, 1.0, 1.5]
+    robot_joint_position.layout.dim.append(MultiArrayDimension())
+    robot_joint_position.layout.dim[0].size=3
+    robot_joint_position.layout.dim[0].stride = 1
+    robot_joint_position.layout.dim[0].label='positions'
     rospy.loginfo(robot_joint_position)
     pub.publish(robot_joint_position)
     rate.sleep()

@@ -74,25 +74,20 @@ typedef struct{
     double old_position;
 
     double position_cmd;
- //   double old_position_cmd;
     
 }SimpleMotor;
 
 class MagicianHWInterface : public hardware_interface::RobotHW
 {
 public:
-//    MagicianHWInterface();
     MagicianHWInterface(ros::NodeHandle& nh);
     ~MagicianHWInterface();
 
     bool init();
-    //bool init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh);
     void read(const ros::Time& time, const ros::Duration& period);
     void write(const ros::Time& time, const ros::Duration& period);
 
-    //bool reinitPose(const std::vector<double> &joint_values);
     bool isMoving();
-    //bool ResetPose(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &resp);
 
 private:
     boost::shared_ptr<MagicianDevice> magician_device_;
@@ -100,9 +95,7 @@ private:
 
     hardware_interface::JointStateInterface joint_state_interface_;
     hardware_interface::PositionJointInterface position_joint_interface_;
-    //joint_limits_interface::JointLimits limits_;
 
-    //ros::NodeHandle root_nh_, local_nh_, robot_hw_nh_;
     ros::NodeHandle nh_;
 
     ros::Time read_update_time_;
