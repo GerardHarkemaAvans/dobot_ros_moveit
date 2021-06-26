@@ -120,12 +120,18 @@ int main(int argc, char** argv)
       
       uint64_t executedCmdIndex = 0;
       
-      while(executedCmdIndex < queuedCmdIndex)
+      while(executedCmdIndex < queuedCmdIndex){
+        sleep(1);
         GetQueuedCmdCurrentIndex(&executedCmdIndex);
+      }
       
 
       ROS_INFO("Homeing Ready");
     }
+    
+    //SetQueuedCmdStopExec(); 
+    
+    
     
     ros::init(argc, argv, "magician_hardware_node", ros::init_options::AnonymousName);
 

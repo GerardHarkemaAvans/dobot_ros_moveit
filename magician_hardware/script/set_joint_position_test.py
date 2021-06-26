@@ -2,32 +2,35 @@
 
 import rospy
 from std_msgs.msg import String
-from std_msgs.msg import Float64MultiArray
-from std_msgs.msg import MultiArrayDimension
+from trajectory_msgs.msg import JointTrajectory
+from trajectory_msgs.msg import JointTrajectoryPoint
+
 
 
 def talker():
-    pub = rospy.Publisher('MagicianHWInterface/magician_arm_controller/command', Float64MultiArray, queue_size=1)
-    rospy.init_node('talker', anonymous=True)
-    rate = rospy.Rate(1) # 1hz
+  pub = rospy.Publisher('/magician_arm_controller/command', JointTrajectory, queue_size=1)
+  rospy.init_node('talker', anonymous=True)
+  rate = rospy.Rate(1) # 1hz
 
-    robot_joint_position = Float64MultiArray()
-    robot_joint_position.data = []
+  joint_trajectory = JointTrajectory()
+  joint_trajectory.header.seq = 0
+  joint_trajectory.header.stamp = rospy.Time.now()
+  joint_trajectory.header.frame_id = 'position_test'
+  joint_trajectory.joint_names = ['magician_joint1',  'magician_joint2', 'magician_joint3']
+  joint_trajectory.points.append(JointTrajectoryPoint())
+  joint_trajectory.points[0].positions = [0.5, 1.0, 1.5]
+  joint_trajectory.points[0].velocities = [0, 0, 0]    
+  joint_trajectory.points[0].accelerations = [0, 0, 0]    
+  joint_trajectory.points[0].effort = [0, 0, 0]
+  joint_trajectory.points[0].time_from_start = rospy.Duration(5.0)
 
+  rospy.loginfo(joint_trajectory)
+  pub.publish(joint_trajectory)
+  rate.sleep()
 
-    #while not rospy.is_shutdown():
-    robot_joint_position.data = [0.5, 1.0, 1.5]
-    robot_joint_position.layout.dim.append(MultiArrayDimension())
-    robot_joint_position.layout.dim[0].size=3
-    robot_joint_position.layout.dim[0].stride = 1
-    robot_joint_position.layout.dim[0].label='positions'
-    rospy.loginfo(robot_joint_position)
-    pub.publish(robot_joint_position)
-    rate.sleep()
+  #while not rospy.is_shutdown():
 
-    #while not rospy.is_shutdown():
-
-    # rate.sleep()
+  # rate.sleep()
 
 if __name__ == '__main__':
     try:

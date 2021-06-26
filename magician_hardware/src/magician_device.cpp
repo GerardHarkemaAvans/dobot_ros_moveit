@@ -68,7 +68,8 @@ bool MagicianDevice::InitPose()
     uint64_t executedCmdIndex = 0;
     uint64_t queuedCmdIndex;
     int result;
-    
+  
+ 
     if(motor_num_>4)
     {
         return false;
@@ -114,18 +115,21 @@ bool MagicianDevice::InitPose()
     ptpJointParams.acceleration[3]= DEFAULT_acceleration; // range 0.. 500 mm/s2
 
     std::cout<<"SetPTPJointParams"<<std::endl;
+//    result = SetPTPJointParams(&ptpJointParams, false, &queuedCmdIndex);
+    
     result = SetPTPJointParams(&ptpJointParams, true, &queuedCmdIndex);
     if(result){
         std::cout<<"Unable to set joint parameters, result : " << result <<std::endl;
     }
   
+    GetQueuedCmdCurrentIndex(&executedCmdIndex);
     while(executedCmdIndex < queuedCmdIndex){
         sleep(1);
         GetQueuedCmdCurrentIndex(&executedCmdIndex); 
         }
    
 #if 1
-    std::cout<<"SetPTPCmd"<<std::endl;
+    std::cout<<"End SetPTPCmd"<<std::endl;
 #endif
 #endif
 
@@ -156,7 +160,7 @@ bool MagicianDevice::ReadPose(std::vector<double> &joint_values)
         double offset=0;
         for(size_t i=0; i<joint_bases_.size(); i++)
         {
-            offset+=fabs(joint_bases_[i]-pose.jointAngle[i]*RAD_PER_DEGREE);
+            offset+=fabs(joint_bases_[i]-pose.jointAngle[i] * RAD_PER_DEGREE);
         }
 
         if(offset>0.1*RAD_PER_DEGREE)
@@ -184,7 +188,7 @@ bool MagicianDevice::ReadPose(std::vector<double> &joint_values)
     return true;
 }
 
-
+#if 1
 bool MagicianDevice::WritePose(const std::vector<double> &joint_cmds)
 {
   assert(joint_cmds.size()==motor_num_);
@@ -205,7 +209,7 @@ bool MagicianDevice::WritePose(const std::vector<double> &joint_cmds)
     //std::cout<<"nb"<< std::flush;
     for (size_t i=0; i<motor_num_; i++)
     {
-    #if 0
+    #if 1
       std::cout<<"joint_cmds "<< i << ": " << joint_cmds[i]<<std::endl;
     #endif
 
@@ -217,9 +221,9 @@ bool MagicianDevice::WritePose(const std::vector<double> &joint_cmds)
         std::cout<<"SetPTPCmd"<<std::endl;
         PTPCmd cmd;
         cmd.ptpMode = PTPMOVLANGLEMode;
-        cmd.x = joint_cmds[0];
-        cmd.y = joint_cmds[1];
-        cmd.z = joint_cmds[2];
+        cmd.x = joint_cmds[0] / RAD_PER_DEGREE;
+        cmd.y = joint_cmds[1] / RAD_PER_DEGREE;
+        cmd.z = joint_cmds[2] / RAD_PER_DEGREE;
         cmd.r = 0;
         result=SetPTPCmd(&cmd, true, &queuedCmdIndex);
         if (result) {
@@ -237,7 +241,49 @@ bool MagicianDevice::WritePose(const std::vector<double> &joint_cmds)
       }
     }
   }   
-    
+#else
+
+bool MagicianDevice::WritePose(const std::vector<double> &joint_cmds)
+{
+  assert(joint_cmds.size()==motor_num_);
+
+  int result;
+
+  #if 1
+  for (size_t i=0; i<motor_num_; i++)
+  {
+    std::cout<<"joint_cmds "<< i << ": " << joint_cmds[i]<<std::endl;
+  }
+  #endif
+
+  for(size_t i=0; i<motor_num_; i++)
+  {
+    if (old_joint_cmds[i]!=joint_cmds[i]){
+      std::cout<<"SetPTPCmd"<<std::endl;
+      PTPCmd cmd;
+      cmd.ptpMode = PTPMOVLANGLEMode;
+      cmd.x = joint_cmds[0] / RAD_PER_DEGREE;
+      cmd.y = joint_cmds[1] / RAD_PER_DEGREE;
+      cmd.z = joint_cmds[2] / RAD_PER_DEGREE;
+      cmd.r = 0;
+      result=SetPTPCmd(&cmd, false, &queuedCmdIndex);
+      if (result) {
+         std::cout<<"Unable set angles, result : " << result <<std::endl;
+         return false;
+      } 
+      
+      for(size_t i=0; i<motor_num_; i++)
+      {
+        old_joint_cmds[i]=joint_cmds[i];
+      }
+      return true;
+
+    }
+  }  
+
+#endif
+
+   
 }
 
 //}
