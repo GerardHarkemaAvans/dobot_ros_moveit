@@ -90,7 +90,7 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          magician_end_effctor:
+          magician_end_effector:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -208,7 +208,7 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          magician_end_effctor:
+          magician_end_effector:
             Alpha: 1
             Show Axes: false
             Show Trail: false

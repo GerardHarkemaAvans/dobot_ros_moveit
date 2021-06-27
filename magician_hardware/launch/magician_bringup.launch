@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <launch>
 
+  <arg name="homeing" default="false"/>
+  
   <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find magician_description)/urdf/magician.urdf.xacro'" />
   
   <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
@@ -8,8 +10,10 @@
     <param name="tf_prefix" type="string" value="" />
   </node>
     
-  <node name="magician_hardware_node" pkg="magician_hardware" type="magician_hardware_node" args="ttyUSB0 doHomeing" output="screen"/>
+  <node if="$(arg homeing)" name="magician_hardware_node" pkg="magician_hardware" type="magician_hardware_node" args="ttyUSB0 doHomeing" output="screen"/>
   
+   <node unless="$(arg homeing)" name="magician_hardware_node" pkg="magician_hardware" type="magician_hardware_node" args="ttyUSB0 noHomeing" output="screen"/>
+    
   <rosparam file="$(find magician_hardware)/config/joint_state_controller.yaml" command="load"/>
   <node name="joint_state_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn joint_state_controller" respawn="false" output="screen"/>
   

@@ -19,7 +19,7 @@
         <joint name="magician_fake_joint3" />
     </group>
     <group name="manipulator">
-        <link name="magician_end_effctor" />
+        <link name="magician_end_effector" />
         <joint name="magician_joint1" />
         <joint name="magician_joint2" />
         <joint name="magician_joint3" />

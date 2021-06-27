@@ -209,7 +209,7 @@ bool MagicianDevice::WritePose(const std::vector<double> &joint_cmds)
     //std::cout<<"nb"<< std::flush;
     for (size_t i=0; i<motor_num_; i++)
     {
-    #if 1
+    #if 0
       std::cout<<"joint_cmds "<< i << ": " << joint_cmds[i]<<std::endl;
     #endif
 
@@ -225,6 +225,11 @@ bool MagicianDevice::WritePose(const std::vector<double> &joint_cmds)
         cmd.y = joint_cmds[1] / RAD_PER_DEGREE;
         cmd.z = joint_cmds[2] / RAD_PER_DEGREE;
         cmd.r = 0;
+    #if 1
+    std::cout<<"joint_cmd.x " << cmd.x <<std::endl;
+    std::cout<<"joint_cmd.y " << cmd.y <<std::endl;
+    std::cout<<"joint_cmd.z " << cmd.z <<std::endl;
+    #endif
         result=SetPTPCmd(&cmd, true, &queuedCmdIndex);
         if (result) {
            std::cout<<"Unable set angles, result : " << result <<std::endl;

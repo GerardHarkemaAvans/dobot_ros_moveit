@@ -589,7 +589,7 @@
     <axis
       xyz="0 0 0" />
   </joint>
-  <link name="magician_end_effctor"/>
+  <link name="magician_end_effector"/>
   <joint
     name="magician_end_link_joint1"
     type="fixed">
@@ -599,7 +599,7 @@
     <parent
       link="magician_end_link" />
     <child
-      link="magician_end_effctor" />
+      link="magician_end_effector" />
     <axis
       xyz="0 0 0" />
   </joint>

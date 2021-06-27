@@ -12,6 +12,7 @@ from moveit_msgs.msg import MoveGroupAction, MoveGroupGoal, Constraints, JointCo
 Created on 10.10.2016
 
 @author: Alberto Romay
+@modified: Gerard Harkema
 '''
 
 class SrdfStateToMoveitAriac(EventState):
@@ -134,7 +135,13 @@ class SrdfStateToMoveitAriac(EventState):
                         if robot is None:
                                 Logger.logwarn('Did not find robot name in SRDF: %s' % self._robot_name)
                                 return 'param_error'
-
+                                
+                        # get joint names from group
+                        for g in robot.iter('group'):
+                          if self._move_group == g.attrib['name']:
+                            self._joint_names  = [str(j.attrib['name']) for j in g.iter('joint')]
+                            break
+                        
                         config = None
                         for c in robot.iter('group_state'):
                                 if (self._move_group == '' or self._move_group == c.attrib['group']) \
@@ -147,15 +154,17 @@ class SrdfStateToMoveitAriac(EventState):
                         if config is None:
                                 Logger.logwarn('Did not find config name in SRDF: %s' % self._config_name)
                                 return 'param_error'
+                                
+                        # get joint values from specific jount in group_state
+                        self._joint_config=[]
+                        for joint_name in self._joint_names:
+                          for j in config.iter('joint'):
+                            if j.attrib['name'] == joint_name:
+                              self._joint_config.append(float(j.attrib['value']))
 
-                        try:
-                                self._joint_config = [float(j.attrib['value']) for j in config.iter('joint')]
-                                self._joint_names  = [str(j.attrib['name']) for j in config.iter('joint')]
-                                userdata.joint_values = self._joint_config  # Save joint configuration to output key
-                                userdata.joint_names  = self._joint_names  # Save joint names to output key
-                        except Exception as e:
-                                Logger.logwarn('Unable to parse joint values from SRDF:\n%s' % str(e))
-                                return 'param_error'
+                                
+                        userdata.joint_values = self._joint_config  # Save joint configuration to output key
+                        userdata.joint_names  = self._joint_names  # Save joint names to output key
 
 
                         # Action Initialization

@@ -91,7 +91,7 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          magician_end_effctor:
+          magician_end_effector:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -209,7 +209,7 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          magician_end_effctor:
+          magician_end_effector:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -339,7 +339,7 @@ Visualization Manager:
           Value: true
         magician_base_surface:
           Value: false
-        magician_end_effctor:
+        magician_end_effector:
           Value: true
         magician_end_link:
           Value: false
@@ -386,7 +386,7 @@ Visualization Manager:
                         magician_arm_end:
                           magician_end_turnplate:
                             magician_end_link:
-                              magician_end_effctor:
+                              magician_end_effector:
                                 {}
                   magician_link2_surface:
                     {}
@@ -418,7 +418,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        magician_end_effctor:
+        magician_end_effector:
           Alpha: 1
           Show Axes: false
           Show Trail: false
