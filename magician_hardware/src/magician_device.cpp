@@ -112,7 +112,9 @@ bool MagicianDevice::InitPose()
     ptpJointParams.acceleration[2]= DEFAULT_acceleration; // range 0.. 500 mm/s2
     ptpJointParams.acceleration[3]= DEFAULT_acceleration; // range 0.. 500 mm/s2
 
+#if 0
     std::cout<<"SetPTPJointParams"<<std::endl;
+#endif
     
     result = SetPTPJointParams(&ptpJointParams, true, &queuedCmdIndex);
     if(result){
@@ -125,7 +127,7 @@ bool MagicianDevice::InitPose()
         GetQueuedCmdCurrentIndex(&executedCmdIndex); 
         }
    
-#if 1
+#if 0
     std::cout<<"End SetPTPCmd"<<std::endl;
 #endif
     return true;
@@ -182,7 +184,7 @@ bool MagicianDevice::ReadPose(std::vector<double> &joint_values)
     return true;
 }
 
-#if 1
+
 bool MagicianDevice::WritePose(const std::vector<double> &joint_cmds)
 {
   assert(joint_cmds.size()==motor_num_);
@@ -194,14 +196,14 @@ bool MagicianDevice::WritePose(const std::vector<double> &joint_cmds)
     uint8_t alarmsState[32];
     uint32_t len; 
     uint32_t maxLen;
-    GetAlarmsState(alarmsState, &len, 255);
+    GetAlarmsState((uint8_t *)alarmsState, &len, 255);
     if(len){
       for(int i = 0; i < len; i++){
         if(alarmsState[i]){
           ClearAllAlarmsState();
-          std::cout<<"Alarm: ";
-          for(int j = 0; j < len; j++) std::cout<< "0x" << std::hex << (int)alarmsState[j] << " ";
-          std::cout<<std::endl<< std::dec ;
+          std::cout<<"Alarm: " ;
+          for(int j = 0; j < len; j++) std::cout<< "0x" << std::hex << std::setw(2) << std::setfill('0') << (int)alarmsState[j] << " ";
+          std::cout<<std::endl<< std::dec;
           break;
         }
       }
@@ -215,13 +217,6 @@ bool MagicianDevice::WritePose(const std::vector<double> &joint_cmds)
     GetQueuedCmdCurrentIndex(&executedCmdIndex);
     if(executedCmdIndex >= queuedCmdIndex){
       Busy = false;
-#if 0
-      struct timespec tim, tim2;
-      tim.tv_sec = 0;
-      tim.tv_nsec = 50000L;
-
-      nanosleep(&tim , &tim2);   
-#endif
     }
 
   }
@@ -240,14 +235,16 @@ bool MagicianDevice::WritePose(const std::vector<double> &joint_cmds)
     for(size_t i=0; i<motor_num_; i++)
     {
       if(old_joint_cmds[i]!=joint_cmds[i]){
-        //std::cout<<"SetPTPCmd"<<std::endl;
+#if 0
+        std::cout<<"SetPTPCmd"<<std::endl;
+#endif
         PTPCmd cmd;
         cmd.ptpMode = PTPMOVLANGLEMode;
         cmd.x = joint_cmds[0] / RAD_PER_DEGREE;
         cmd.y = joint_cmds[1] / RAD_PER_DEGREE;
         cmd.z = joint_cmds[2] / RAD_PER_DEGREE;
         cmd.r = 0;
-#if 1
+#if 0
         std::cout<<"joint_cmd.x " << cmd.x <<std::endl;
         std::cout<<"joint_cmd.y " << cmd.y <<std::endl;
         std::cout<<"joint_cmd.z " << cmd.z <<std::endl;
@@ -268,49 +265,4 @@ bool MagicianDevice::WritePose(const std::vector<double> &joint_cmds)
     }
   }
 }   
-#else
-
-bool MagicianDevice::WritePose(const std::vector<double> &joint_cmds)
-{
-  assert(joint_cmds.size()==motor_num_);
-
-  int result;
-
-  #if 1
-  for (size_t i=0; i<motor_num_; i++)
-  {
-    std::cout<<"joint_cmds "<< i << ": " << joint_cmds[i]<<std::endl;
-  }
-  #endif
-
-  for(size_t i=0; i<motor_num_; i++)
-  {
-    if (old_joint_cmds[i]!=joint_cmds[i]){
-      std::cout<<"SetPTPCmd"<<std::endl;
-      PTPCmd cmd;
-      cmd.ptpMode = PTPMOVLANGLEMode;
-      cmd.x = joint_cmds[0] / RAD_PER_DEGREE;
-      cmd.y = joint_cmds[1] / RAD_PER_DEGREE;
-      cmd.z = joint_cmds[2] / RAD_PER_DEGREE;
-      cmd.r = 0;
-      result=SetPTPCmd(&cmd, false, &queuedCmdIndex);
-      if (result) {
-         std::cout<<"Unable set angles, result : " << result <<std::endl;
-         return false;
-      } 
-      
-      for(size_t i=0; i<motor_num_; i++)
-      {
-        old_joint_cmds[i]=joint_cmds[i];
-      }
-      return true;
-
-    }
-  }  
-}
-#endif
-
-   
-
-
 //}
