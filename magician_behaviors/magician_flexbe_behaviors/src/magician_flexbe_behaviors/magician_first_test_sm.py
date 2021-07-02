@@ -8,7 +8,7 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
-from ariac_flexbe_states.srdf_state_to_moveit_ariac_state import SrdfStateToMoveitAriac
+from magician_flexbe_states.srdf_to_magician_state import SrdfStateToMagician
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -21,7 +21,7 @@ Created on Tue Jun 08 2021
 '''
 class magician_first_testSM(Behavior):
 	'''
-	This is the first test of controlling the Dobot
+	This is the first test of controlling the Magician
 	'''
 
 
@@ -62,28 +62,28 @@ class magician_first_testSM(Behavior):
 		with _state_machine:
 			# x:84 y:74
 			OperatableStateMachine.add('MoveHome',
-										SrdfStateToMoveitAriac(),
+										SrdfStateToMagician(),
 										transitions={'reached': 'MoveRight', 'planning_failed': 'failed', 'control_failed': 'failed', 'param_error': 'failed'},
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off, 'param_error': Autonomy.Off},
 										remapping={'config_name': 'config_name_home', 'move_group': 'move_group', 'action_topic_namespace': 'action_topic_namespace', 'action_topic': 'action_topic', 'robot_name': 'robot_name', 'config_name_out': 'config_name_out', 'move_group_out': 'move_group_out', 'robot_name_out': 'robot_name_out', 'action_topic_out': 'action_topic_out', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
 			# x:484 y:74
 			OperatableStateMachine.add('MoveLeft',
-										SrdfStateToMoveitAriac(),
+										SrdfStateToMagician(),
 										transitions={'reached': 'MoveBackHome', 'planning_failed': 'failed', 'control_failed': 'failed', 'param_error': 'failed'},
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off, 'param_error': Autonomy.Off},
 										remapping={'config_name': 'config_name_left', 'move_group': 'move_group', 'action_topic_namespace': 'action_topic_namespace', 'action_topic': 'action_topic', 'robot_name': 'robot_name', 'config_name_out': 'config_name_out', 'move_group_out': 'move_group_out', 'robot_name_out': 'robot_name_out', 'action_topic_out': 'action_topic_out', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
 			# x:284 y:74
 			OperatableStateMachine.add('MoveRight',
-										SrdfStateToMoveitAriac(),
+										SrdfStateToMagician(),
 										transitions={'reached': 'MoveLeft', 'planning_failed': 'failed', 'control_failed': 'failed', 'param_error': 'failed'},
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off, 'param_error': Autonomy.Off},
 										remapping={'config_name': 'config_name_right', 'move_group': 'move_group', 'action_topic_namespace': 'action_topic_namespace', 'action_topic': 'action_topic', 'robot_name': 'robot_name', 'config_name_out': 'config_name_out', 'move_group_out': 'move_group_out', 'robot_name_out': 'robot_name_out', 'action_topic_out': 'action_topic_out', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
 			# x:684 y:74
 			OperatableStateMachine.add('MoveBackHome',
-										SrdfStateToMoveitAriac(),
+										SrdfStateToMagician(),
 										transitions={'reached': 'finished', 'planning_failed': 'failed', 'control_failed': 'failed', 'param_error': 'failed'},
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off, 'param_error': Autonomy.Off},
 										remapping={'config_name': 'config_name_home', 'move_group': 'move_group', 'action_topic_namespace': 'action_topic_namespace', 'action_topic': 'action_topic', 'robot_name': 'robot_name', 'config_name_out': 'config_name_out', 'move_group_out': 'move_group_out', 'robot_name_out': 'robot_name_out', 'action_topic_out': 'action_topic_out', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})

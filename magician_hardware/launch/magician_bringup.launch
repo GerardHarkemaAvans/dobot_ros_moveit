@@ -16,8 +16,10 @@
     
   <rosparam file="$(find magician_hardware)/config/joint_state_controller.yaml" command="load"/>
   <node name="joint_state_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn joint_state_controller" respawn="false" output="screen"/>
-  
+
+<!-- disabled by Gerard  
   <rosparam file="$(find magician_hardware)/config/magician_arm_controller.yaml" command="load"/>
   <node name="elfin_arm_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn magician_arm_controller" respawn="false" output="screen"/>
+  -->
 
 </launch>

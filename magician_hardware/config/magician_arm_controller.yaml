@@ -6,8 +6,11 @@ magician_arm_controller:
      - magician_joint3
   constraints:
       goal_time: 0.6
-      stopped_velocity_tolerance: 0.1
+      stopped_velocity_tolerance: 0
+      magician_joint1: {trajectory: 1.0, goal: 0.5}
+      magician_joint2: {trajectory: 1.0, goal: 0.5}
+      magician_joint3: {trajectory: 1.0, goal: 0.5}
   stop_trajectory_duration: 0.05
   state_publish_rate:  1
-  action_monitor_rate: 10
+  action_monitor_rate: 1
 

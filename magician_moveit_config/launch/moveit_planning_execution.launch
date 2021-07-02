@@ -7,19 +7,28 @@
     
     
   <!-- Remap follow_joint_trajectory -->
+<!-- disabled by gerard 
   <remap if="$(arg sim)" from="/follow_joint_trajectory" to="/magician_arm_controller/follow_joint_trajectory"/>
-  
+-->  
   
 <!--
  The planning and execution components of MoveIt! configured to 
  publish the current configuration of the robot (simulated or real)
  and the current state of the world as seen by the planner
 -->
-  
+
+<!-- disabled by Gerard
  <include file="$(find magician_moveit_config)/launch/move_group.launch">
     <arg name="debug" default="$(arg debug)" />
  </include>
- 
+--> 
+
+  <!-- The name of the parameter under which the URDF is loaded -->
+  <arg name="robot_description" default="robot_description"/>
+  
+ <!-- The semantic description that corresponds to the URDF -->
+  <param name="$(arg robot_description)_semantic" textfile="$(find magician_moveit_config)/config/magician.srdf" />
+  
  <!-- The visualization component of MoveIt! -->
  <arg name="display" default="true"/>
  <include file="$(find magician_moveit_config)/launch/moveit_realworld_rviz.launch" if="$(arg display)">

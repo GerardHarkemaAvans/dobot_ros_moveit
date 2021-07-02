@@ -23,10 +23,8 @@
   <xacro:property name="joint2_upper" value="1.48"/>
   <xacro:property name="joint3_lower" value="-1.17"/>
   <xacro:property name="joint3_upper" value="1.57"/>
-  <xacro:property name="joint_velocity" value="0.5"/> <!-- mm/s   ???? -->
-<!--
-  <xacro:property name="joint_velocity" value="1.57"/>
--->
+  <xacro:property name="joint_velocity" value="1.57"/> <!-- rad/s   ???? -->
+
   
   <link name="world"/>
   <link name="magician_origin"/>

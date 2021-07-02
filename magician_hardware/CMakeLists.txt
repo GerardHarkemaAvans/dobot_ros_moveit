@@ -141,6 +141,7 @@ add_service_files(
   SetQueuedCmdStopExec.srv
   SetQueuedCmdForceStopExec.srv
   SetQueuedCmdClear.srv
+  GetQueuedCmdCurrentIndex.srv
   
 )
 
@@ -263,7 +264,7 @@ add_executable(${PROJECT_NAME}_node
                src/magician_device.cpp
                src/magician_hardware_interface.cpp
                src/magician_hardware_node.cpp
-               src/magician_topic_srv_server.cpp)
+               src/magician_ros_services.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

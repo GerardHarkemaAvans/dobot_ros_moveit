@@ -100,17 +100,20 @@ bool MagicianDevice::InitPose()
     
     PTPJointParams ptpJointParams;
 
-    #define DEFAULT_velocity 500
-    #define DEFAULT_acceleration 500
+//    #define DEFAULT_velocity 500
+//    #define DEFAULT_acceleration 500
+    #define DEFAULT_velocity 0.2 //rad/s range 0 .. 5.58 rad/s 
+    #define DEFAULT_acceleration 2 //rad/s2 range 0.. ???? rad/s2
+
     
-    ptpJointParams.velocity[0] = DEFAULT_velocity; // range 0 .. 500 mm/s 
-    ptpJointParams.velocity[1] = DEFAULT_velocity; // range 0 .. 500 mm/s 
-    ptpJointParams.velocity[2] = DEFAULT_velocity; // range 0 .. 500 mm/s 
-    ptpJointParams.velocity[3] = DEFAULT_velocity; // range 0 .. 500 mm/s 
-    ptpJointParams.acceleration[0]= DEFAULT_acceleration; // range 0.. 500 mm/s2
-    ptpJointParams.acceleration[1]= DEFAULT_acceleration; // range 0.. 500 mm/s2
-    ptpJointParams.acceleration[2]= DEFAULT_acceleration; // range 0.. 500 mm/s2
-    ptpJointParams.acceleration[3]= DEFAULT_acceleration; // range 0.. 500 mm/s2
+    ptpJointParams.velocity[0] = DEFAULT_velocity / RAD_PER_DEGREE;
+    ptpJointParams.velocity[1] = DEFAULT_velocity / RAD_PER_DEGREE;
+    ptpJointParams.velocity[2] = DEFAULT_velocity / RAD_PER_DEGREE; 
+    ptpJointParams.velocity[3] = DEFAULT_velocity / RAD_PER_DEGREE;
+    ptpJointParams.acceleration[0]= DEFAULT_acceleration / RAD_PER_DEGREE; 
+    ptpJointParams.acceleration[1]= DEFAULT_acceleration / RAD_PER_DEGREE; 
+    ptpJointParams.acceleration[2]= DEFAULT_acceleration / RAD_PER_DEGREE; 
+    ptpJointParams.acceleration[3]= DEFAULT_acceleration / RAD_PER_DEGREE; 
 
 #if 0
     std::cout<<"SetPTPJointParams"<<std::endl;
@@ -210,7 +213,7 @@ bool MagicianDevice::WritePose(const std::vector<double> &joint_cmds)
     }
   }
 
-
+#if 1
   if(Busy){
 
     //std::cout<<"b"<< std::flush;
@@ -221,6 +224,7 @@ bool MagicianDevice::WritePose(const std::vector<double> &joint_cmds)
 
   }
   else{
+#endif
 #if 0
     std::cout<<"nb"<< std::flush;
     for (size_t i=0; i<motor_num_; i++)
@@ -235,7 +239,7 @@ bool MagicianDevice::WritePose(const std::vector<double> &joint_cmds)
     for(size_t i=0; i<motor_num_; i++)
     {
       if(old_joint_cmds[i]!=joint_cmds[i]){
-#if 0
+#if 1
         std::cout<<"SetPTPCmd"<<std::endl;
 #endif
         PTPCmd cmd;
@@ -250,19 +254,22 @@ bool MagicianDevice::WritePose(const std::vector<double> &joint_cmds)
         std::cout<<"joint_cmd.z " << cmd.z <<std::endl;
 #endif
         result=SetPTPCmd(&cmd, true, &queuedCmdIndex);
+ 
+        Busy = true; 
+        
+        for(size_t j=0; j<motor_num_; j++)
+        {
+          old_joint_cmds[j]=joint_cmds[j];
+        }
         if (result) {
            std::cout<<"Unable set angles, result : " << result <<std::endl;
            return false;
-        } 
-        Busy = true; 
-        
-        for(size_t i=0; i<motor_num_; i++)
-        {
-          old_joint_cmds[i]=joint_cmds[i];
         }
         return true;
       }
     }
+#if 1
   }
+#endif
 }   
 //}
