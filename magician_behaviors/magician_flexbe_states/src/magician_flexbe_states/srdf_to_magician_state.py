@@ -64,6 +64,8 @@ class SrdfStateToMagician(EventState):
     self.service_timeout = 0.5
 
     self._real_world = True
+    
+
     Logger.loginfo('Waiting for magician services...')
     try:
       rospy.wait_for_service('/dobot_magician_server/SetPTPCmd', self.service_timeout)

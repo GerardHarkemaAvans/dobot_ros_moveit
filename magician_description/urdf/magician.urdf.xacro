@@ -1,33 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com)
      Commit Version: 1.5.0-0-g9aa0fdb  Build Version: 1.5.7004.21443
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot
   name="magician" xmlns:xacro="http://www.ros.org/wiki/xacro">
-    
+
   <xacro:include filename="$(find magician_description)/urdf/magician.gazebo" />
-  
+
   <xacro:include filename="$(find magician_description)/urdf/magician_transmission.xacro" />
 
-<!--  
   <xacro:property name="joint1_lower" value="-2.1816"/>
   <xacro:property name="joint1_upper" value="2.1816"/>
   <xacro:property name="joint2_lower" value="-0.35"/>
   <xacro:property name="joint2_upper" value="1.57"/>
   <xacro:property name="joint3_lower" value="-0.62"/>
   <xacro:property name="joint3_upper" value="1.57"/>
--->  
+<!--
   <xacro:property name="joint1_lower" value="-1.57"/>
   <xacro:property name="joint1_upper" value="1.57"/>
   <xacro:property name="joint2_lower" value="0"/>
   <xacro:property name="joint2_upper" value="1.48"/>
   <xacro:property name="joint3_lower" value="-1.17"/>
   <xacro:property name="joint3_upper" value="1.57"/>
+-->
   <xacro:property name="joint_velocity" value="1.57"/> <!-- rad/s   ???? -->
 
-  
+
   <link name="world"/>
+<!--
   <link name="magician_origin"/>
+-->
   <joint
     name="world_joint"
     type="fixed">
@@ -37,7 +39,7 @@
     <parent
       link="world" />
     <child
-      link="magician_origin" />
+      link="magician_base" />
     <axis
       xyz="0 0 0" />
   </joint>
@@ -81,6 +83,7 @@
       </geometry>
     </collision>
   </link>
+<!--
   <joint
     name="magician_origin_joint1"
     type="fixed">
@@ -94,6 +97,7 @@
     <axis
       xyz="0 0 0" />
   </joint>
+-->
   <link
     name="magician_link1">
     <inertial>
@@ -614,7 +618,7 @@
       joint="magician_joint1"
       multiplier="-1"
       offset="0"/>
-  </joint>  
+  </joint>
   <link name="magician_end_link"/>
   <joint
     name="magician_end_turnplate_joint1"
@@ -642,5 +646,17 @@
       link="magician_end_effector" />
     <axis
       xyz="0 0 0" />
+  </joint>
+  <link name="magician_tool0"/>
+  <joint
+    name="magician_tool0_joint"
+    type="fixed">
+    <origin
+      xyz="0.041 0.0 0.0"
+      rpy="3.1415926535897932 0 0" />
+    <parent
+      link="magician_end_effector" />
+    <child
+      link="magician_tool0" />
   </joint>
 </robot>

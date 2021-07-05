@@ -21,7 +21,7 @@ Created on Tue Jun 08 2021
 '''
 class magician_first_testSM(Behavior):
 	'''
-	This is the first test of controlling the Magician
+	This is the first test of controlling the Dobot
 	'''
 
 
@@ -46,7 +46,7 @@ class magician_first_testSM(Behavior):
 		# x:883 y:90, x:425 y:303
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 		_state_machine.userdata.config_name_home = 'home'
-		_state_machine.userdata.move_group = 'manipulator'
+		_state_machine.userdata.move_group = 'magician_arm'
 		_state_machine.userdata.action_topic_namespace = ''
 		_state_machine.userdata.action_topic = '/move_group'
 		_state_machine.userdata.robot_name = ''

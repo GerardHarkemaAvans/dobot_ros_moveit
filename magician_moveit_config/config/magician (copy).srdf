@@ -18,6 +18,19 @@
         <joint name="magician_fake_joint2" />
         <joint name="magician_fake_joint3" />
     </group>
+    <group name="manipulator">
+        <link name="magician_end_link" />
+        <link name="magician_link1" />
+        <link name="magician_link2" />
+        <link name="magician_link3" />
+        <joint name="magician_joint1" />
+        <joint name="magician_joint2" />
+        <joint name="magician_joint3" />
+        <joint name="magician_fake_joint1" />
+        <joint name="magician_fake_joint2" />
+        <joint name="magician_fake_joint3" />
+        <chain base_link="magician_base" tip_link="magician_tool0" />
+    </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
     <group_state name="home" group="magician_arm">
         <joint name="magician_fake_joint1" value="0" />
@@ -40,6 +53,30 @@
         <joint name="magician_fake_joint2" value="0" />
         <joint name="magician_fake_joint3" value="0" />
         <joint name="magician_joint1" value="-1.2415" />
+        <joint name="magician_joint2" value="0" />
+        <joint name="magician_joint3" value="0" />
+    </group_state>
+    <group_state name="home" group="manipulator">
+        <joint name="magician_fake_joint1" value="0" />
+        <joint name="magician_fake_joint2" value="0" />
+        <joint name="magician_fake_joint3" value="0" />
+        <joint name="magician_joint1" value="0" />
+        <joint name="magician_joint2" value="0" />
+        <joint name="magician_joint3" value="0" />
+    </group_state>
+    <group_state name="left" group="manipulator">
+        <joint name="magician_fake_joint1" value="0" />
+        <joint name="magician_fake_joint2" value="0" />
+        <joint name="magician_fake_joint3" value="0" />
+        <joint name="magician_joint1" value="-1.57" />
+        <joint name="magician_joint2" value="0" />
+        <joint name="magician_joint3" value="0" />
+    </group_state>
+    <group_state name="right" group="manipulator">
+        <joint name="magician_fake_joint1" value="0" />
+        <joint name="magician_fake_joint2" value="0" />
+        <joint name="magician_fake_joint3" value="0" />
+        <joint name="magician_joint1" value="1.57" />
         <joint name="magician_joint2" value="0" />
         <joint name="magician_joint3" value="0" />
     </group_state>
