@@ -23,7 +23,7 @@ class MoveitToJointsMagicianState(EventState):
   '''
   Uses MoveIt to plan and move the specified joints to the target configuration.
 
-  ># move_group        string        Name of the move group to be used for planning.
+  ># group        string        Name of the group to be used for planning.
 
   ># action_topic_namespace    string        Name of the namespace of the move group to be used for planning.
                                   Specified joint names need to exist in the given group.
@@ -47,7 +47,7 @@ class MoveitToJointsMagicianState(EventState):
     '''
     super(MoveitToJointsMagicianState, self).__init__(
         outcomes=['reached', 'planning_failed', 'control_failed'],
-        input_keys=['action_topic_namespace', 'move_group', 'action_topic', 'joint_values', 'joint_names'])
+        input_keys=['action_topic_namespace', 'group', 'action_topic', 'joint_values', 'joint_names'])
     
     self._planning_failed = False
     self._control_failed = False
@@ -74,11 +74,6 @@ class MoveitToJointsMagicianState(EventState):
     else:  
       Logger.loginfo('Simulation environment loaded')
         
-      self._action_topic = action_topic
-      self._client = ProxyActionClient({self._action_topic: MoveGroupAction})
-
-      self._move_group = move_group
-      self._joint_names = joint_names
             
   def execute(self, userdata):
     '''
@@ -101,11 +96,11 @@ class MoveitToJointsMagicianState(EventState):
           self._success = True
       return    
     else:
-      if self._client.has_result(self._action_topic):
-        result = self._client.get_result(self._action_topic)
+      if self._client.has_result(userdata.action_topic):
+        result = self._client.get_result(userdata.action_topic)
         
         if result.error_code.val == MoveItErrorCodes.CONTROL_FAILED:
-          Logger.logwarn('Control failed for move action of group: %s (error code: %s)' % (self._move_group, str(result.error_code)))
+          Logger.logwarn('Control failed for move action of group: %s (error code: %s)' % (userdata.group, str(result.error_code)))
           self._control_failed = True
           return 'control_failed'
         elif result.error_code.val != MoveItErrorCodes.SUCCESS:
@@ -147,17 +142,19 @@ class MoveitToJointsMagicianState(EventState):
       self._control_failed = False
       self._success = False
 
+      self._client = ProxyActionClient({userdata.action_topic: MoveGroupAction})
+
       action_goal = MoveGroupGoal()
-      action_goal.request.group_name = self._move_group
+      action_goal.request.group_name = userdata.group
       goal_constraints = Constraints()
       for i in range(len(userdata.joint_names)):
-        goal_constraints.joint_constraints.append(JointConstraint(joint_name=userdata.joint_names[i], position=userdata.joint_config[i]))
+        goal_constraints.joint_constraints.append(JointConstraint(joint_name=userdata.joint_names[i], position=userdata.joint_values[i]))
       action_goal.request.goal_constraints.append(goal_constraints)
 
       try:
-        self._client.send_goal(self._action_topic, action_goal)
+        self._client.send_goal(userdata.action_topic, action_goal)
       except Exception as e:
-        Logger.logwarn('Failed to send action goal for group: %s\n%s' % (self._move_group, str(e)))
+        Logger.logwarn('Failed to send action goal for group: %s\n%s' % (userdata.group, str(e)))
         self._planning_failed = True
             
 
@@ -166,9 +163,9 @@ class MoveitToJointsMagicianState(EventState):
       pass
     else:
       try:
-        if self._client.is_available(self._action_topic) \
-        and not self._client.has_result(self._action_topic):
-            self._client.cancel(self._action_topic)
+        if self._client.is_available(userdata.action_topic) \
+        and not self._client.has_result(userdata.action_topic):
+            self._client.cancel(userdata.action_topic)
       except:
         # client already closed
         pass
@@ -177,7 +174,7 @@ class MoveitToJointsMagicianState(EventState):
     if(self._real_world):
       pass
     else:
-        self._client.cancel(self._action_topic)
+        self._client.cancel(userdata.action_topic)
 
   def on_resume(self, userdata):
     if(self._real_world):

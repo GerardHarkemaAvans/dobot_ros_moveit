@@ -136,6 +136,7 @@ class ComputeMagicianGraspState(EventState):
             Logger.loginfo(userdata.pose)                
             #target_pose = self._tf_buffer.transform(userdata.pose, 'world')
             target_transform = self._tf_buffer.lookup_transform('world', userdata.pose, rospy.Time())
+            #target_transform = self._tf_buffer.lookup_transform(userdata.pose, 'world', rospy.Time())
             break
           except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
               Logger.logerr("ComputeGraspState::on_enter - Failed to transform to world")

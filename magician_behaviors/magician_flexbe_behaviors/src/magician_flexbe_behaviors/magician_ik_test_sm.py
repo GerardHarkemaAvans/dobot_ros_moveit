@@ -48,7 +48,7 @@ class magician_ik_testSM(Behavior):
 		# x:826 y:88, x:425 y:303
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 		_state_machine.userdata.config_name_home = 'home'
-		_state_machine.userdata.move_group = 'magician_arm'
+		_state_machine.userdata.group = 'magician_arm'
 		_state_machine.userdata.action_topic_namespace = ''
 		_state_machine.userdata.action_topic = '/move_group'
 		_state_machine.userdata.robot_name = ''
@@ -56,10 +56,10 @@ class magician_ik_testSM(Behavior):
 		_state_machine.userdata.config_name_right = 'right'
 		_state_machine.userdata.pose = "testpoint"
 		_state_machine.userdata.namespace = ''
-		_state_machine.userdata.tool_link = 'magician_end_link'
+		_state_machine.userdata.tool_link = 'magician_tool0'
 		_state_machine.userdata.offset = 0.0
 		_state_machine.userdata.rotation = 0.0
-		_state_machine.userdata.group = 'magician_arm'
+		_state_machine.userdata.group2 = 'mani'
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -73,19 +73,19 @@ class magician_ik_testSM(Behavior):
 										SrdfStateToMagician(),
 										transitions={'reached': 'ComputeGraspState', 'planning_failed': 'failed', 'control_failed': 'failed', 'param_error': 'failed'},
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off, 'param_error': Autonomy.Off},
-										remapping={'config_name': 'config_name_home', 'move_group': 'move_group', 'action_topic_namespace': 'action_topic_namespace', 'action_topic': 'action_topic', 'robot_name': 'robot_name', 'config_name_out': 'config_name_out', 'move_group_out': 'move_group_out', 'robot_name_out': 'robot_name_out', 'action_topic_out': 'action_topic_out', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
+										remapping={'config_name': 'config_name_home', 'group': 'group', 'action_topic_namespace': 'action_topic_namespace', 'action_topic': 'action_topic', 'robot_name': 'robot_name', 'config_name_out': 'config_name_out', 'group_out': 'group_out', 'robot_name_out': 'robot_name_out', 'action_topic_out': 'action_topic_out', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
-			# x:625 y:81
-			OperatableStateMachine.add('MovoToGraspPosition',
+			# x:624 y:81
+			OperatableStateMachine.add('MoveToObject',
 										MoveitToJointsMagicianState(),
 										transitions={'reached': 'finished', 'planning_failed': 'failed', 'control_failed': 'failed'},
 										autonomy={'reached': Autonomy.Off, 'planning_failed': Autonomy.Off, 'control_failed': Autonomy.Off},
-										remapping={'action_topic_namespace': 'action_topic_namespace', 'move_group': 'move_group', 'action_topic': 'action_topic', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
+										remapping={'action_topic_namespace': 'action_topic_namespace', 'group': 'group', 'action_topic': 'action_topic', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 
 			# x:426 y:79
 			OperatableStateMachine.add('ComputeGraspState',
 										ComputeMagicianGraspState(joint_names=["magician_joint1", "magician_joint2", "magician_joint3"]),
-										transitions={'continue': 'MovoToGraspPosition', 'failed': 'failed'},
+										transitions={'continue': 'MoveToObject', 'failed': 'failed'},
 										autonomy={'continue': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'group': 'group', 'namespace': 'namespace', 'tool_link': 'tool_link', 'pose': 'pose', 'offset': 'offset', 'rotation': 'rotation', 'joint_values': 'joint_values', 'joint_names': 'joint_names'})
 

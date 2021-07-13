@@ -653,9 +653,9 @@
     type="fixed">
     <origin
       xyz="0.041 0.0 0.0"
-      rpy="3.1415926535897932 0 0" />
+      rpy="0 0 0" />
     <parent
-      link="magician_end_effector" />
+      link="magician_arm_end" />
     <child
       link="magician_tool0" />
   </joint>

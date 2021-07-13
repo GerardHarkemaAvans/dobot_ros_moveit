@@ -66,7 +66,7 @@ EndAdapter::~EndAdapter()
 
 bool EndAdapter::AdaptFK(KDL::Vector &trans, KDL::Rotation &rot, const double &angle1, const double &angle4)
 {
-    std::cout<<"magician_kinematics::AdaptFK"<< std::endl;
+    //std::cout<<"magician_kinematics::AdaptFK"<< std::endl;
     if(eef_active_)
     {
         rot=KDL::Rotation::Rot(vector_z_, end_angle_+eef_angle_+angle1+eef_sign_*angle4);
@@ -83,7 +83,7 @@ bool EndAdapter::AdaptFK(KDL::Vector &trans, KDL::Rotation &rot, const double &a
 
 bool EndAdapter::AdaptIK(KDL::Vector &trans, KDL::Rotation &rot, double &angle4)
 {
-    std::cout<<"magician_kinematics::AdaptIK"<< std::endl;    
+    //std::cout<<"magician_kinematics::AdaptIK"<< std::endl;    
     double module_xy=sqrt(trans.x()*trans.x()+trans.y()*trans.y());
     if(eef_trans_.y()>module_xy || module_xy<LIMIT_TOLERANCE)
     {

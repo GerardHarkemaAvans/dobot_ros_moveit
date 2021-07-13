@@ -70,10 +70,12 @@ Visualization Manager:
           Value: false
         magician_link4:
           Value: false
-        magician_origin:
-          Value: false
         magician_servos:
           Value: false
+        magician_tool0:
+          Value: true
+        testpoint:
+          Value: true
         world:
           Value: false
       Marker Scale: 1
@@ -83,26 +85,28 @@ Visualization Manager:
       Show Names: false
       Tree:
         world:
-          magician_origin:
-            magician_base:
-              magician_base_surface:
-                {}
-              magician_link1:
-                magician_link2:
-                  magician_fake_link:
-                    magician_link3:
-                      magician_link3_surface:
-                        {}
-                      magician_link4:
-                        magician_arm_end:
-                          magician_end_turnplate:
-                            magician_end_link:
-                              magician_end_effector:
+          magician_base:
+            magician_base_surface:
+              {}
+            magician_link1:
+              magician_link2:
+                magician_fake_link:
+                  magician_link3:
+                    magician_link3_surface:
+                      {}
+                    magician_link4:
+                      magician_arm_end:
+                        magician_end_turnplate:
+                          magician_end_link:
+                            magician_end_effector:
+                              magician_tool0:
                                 {}
-                  magician_link2_surface:
-                    {}
-                magician_servos:
+                magician_link2_surface:
                   {}
+              magician_servos:
+                {}
+          testpoint:
+            {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -175,15 +179,15 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        magician_origin:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
         magician_servos:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
+        magician_tool0:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         world:
           Alpha: 1
           Show Axes: false
@@ -210,25 +214,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 0.6598962545394897
+      Distance: 0.9271067380905151
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.2705402672290802
-        Y: -0.16860255599021912
+        X: 0.047238320112228394
+        Y: -0.24896976351737976
         Z: 4.0233192066807533e-7
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.4347970485687256
+      Pitch: 0.6947968006134033
       Target Frame: world
       Value: XYOrbit (rviz)
-      Yaw: 5.2049384117126465
+      Yaw: 4.974935531616211
     Saved: ~
 Window Geometry:
   Displays:

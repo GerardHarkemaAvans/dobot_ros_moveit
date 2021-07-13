@@ -25,7 +25,7 @@ class SrdfStateToMagician(EventState):
 
   ># config_name          string              Name of the joint configuration of interest.
 
-  ># move_group           string              Name of the move group to be used for planning.
+  ># group           string              Name of the group to be used for planning.
 
   ># action_topic_namespace    string              Name of the namespace of the move group to be used for planning.
 
@@ -50,8 +50,8 @@ class SrdfStateToMagician(EventState):
     Constructor
     '''
     super(SrdfStateToMagician, self).__init__(outcomes=['reached', 'planning_failed', 'control_failed', 'param_error'],
-    input_keys = ['config_name', 'move_group', 'action_topic_namespace', 'action_topic', 'robot_name'],
-                  output_keys=['config_name_out', 'move_group_out', 'robot_name_out',  'action_topic_out', 'joint_values', 'joint_names'])
+    input_keys = ['config_name', 'group', 'action_topic_namespace', 'action_topic', 'robot_name'],
+                  output_keys=['config_name_out', 'group_out', 'robot_name_out',  'action_topic_out', 'joint_values', 'joint_names'])
 
 
     self._planning_failed = False
@@ -111,7 +111,7 @@ class SrdfStateToMagician(EventState):
         result = self._client.get_result(self._action_topic)
 
         if result.error_code.val == MoveItErrorCodes.CONTROL_FAILED:
-          Logger.logwarn('Control failed for move action of group: %s (error code: %s)' % (self._move_group, str(result.error_code)))
+          Logger.logwarn('Control failed for move action of group: %s (error code: %s)' % (self._group, str(result.error_code)))
           self._control_failed = True
           return 'control_failed'
         elif result.error_code.val != MoveItErrorCodes.SUCCESS:
@@ -132,7 +132,7 @@ class SrdfStateToMagician(EventState):
       self._success         = False
 
       self._config_name  = userdata.config_name
-      self._move_group   = userdata.move_group
+      self._group   = userdata.group
       self._robot_name   = userdata.robot_name
 
 
@@ -170,18 +170,18 @@ class SrdfStateToMagician(EventState):
 
         # get joint names from group
         for g in robot.iter('group'):
-          if self._move_group == g.attrib['name']:
+          if self._group == g.attrib['name']:
             self._joint_names  = [str(j.attrib['name']) for j in g.iter('joint')]
             break
 
         config = None
         for c in robot.iter('group_state'):
-          if (self._move_group == '' or self._move_group == c.attrib['group']) \
+          if (self._group == '' or self._group == c.attrib['group']) \
             and c.attrib['name'] == self._config_name:
             config = c
-            self._move_group = c.attrib['group']  # Set move group name in case it was not defined
+            self._group = c.attrib['group']  # Set move group name in case it was not defined
             userdata.config_name_out = config           # Save configuration name to output key
-            userdata.move_group_out  = self._move_group  # Save move_group to output key
+            userdata.group_out  = self._group  # Save group to output key
             break
         if config is None:
           Logger.logwarn('Did not find config name in SRDF: %s' % self._config_name)
@@ -231,7 +231,7 @@ class SrdfStateToMagician(EventState):
           self._client       = ProxyActionClient({self._action_topic: MoveGroupAction})
           # Action Initialization
           action_goal = MoveGroupGoal()
-          action_goal.request.group_name = self._move_group
+          action_goal.request.group_name = self._group
           action_goal.request.allowed_planning_time = 1.0
           goal_constraints = Constraints()
           for i in range(len(self._joint_names)):
@@ -246,7 +246,7 @@ class SrdfStateToMagician(EventState):
             self._client.send_goal(self._action_topic, action_goal)
             userdata.action_topic_out = self._action_topic  # Save action topic to output key
           except Exception as e:
-            Logger.logwarn('Failed to send action goal for group: %s\n%s' % (self._move_group, str(e)))
+            Logger.logwarn('Failed to send action goal for group: %s\n%s' % (self._group, str(e)))
             self._planning_failed = True
 
   def on_stop(self):
